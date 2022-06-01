@@ -1,0 +1,422 @@
+\documentclass[a4paper]{article}
+%\documentclass[a4paper]{book}
+\usepackage[utf8]{inputenc}
+%\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{siunitx}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+%\usepackage[export]{adjustbox}
+\usepackage{subcaption}
+\usepackage{bm}
+\usepackage{cancel}
+\usepackage{comment}
+\usepackage{enumerate}
+\usepackage{centernot}
+
+%Comandi da me definiti
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+
+\newcommand{\mat}[1]{\vb{#1}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\e}[1]{\mathrm{e}^{#1}}
+
+\newcommand{\tonde}[1]{\left( {#1} \right)}
+\newcommand{\quadre}[1]{\left[ {#1} \right]}
+\newcommand{\graffe}[1]{\left\{ {#1} \right\}}
+
+
+\usepackage{xcolor}
+
+\title{Astrostatistics \& Cosmology, exercises 4-5-6}%magari scegli una cosa più carina
+\author{Marco Giunta}
+\date{\today}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor=blue,%mancava questo! Senza mette il verde di default. O gray
+    pdftitle={astrostat exercises 4, 5, 6 - Marco Giunta},
+    bookmarks=true,
+    pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\let\temp\phi%questi comandi scambiano phi e varphi
+\let\phi\varphi
+\let\varphi\temp
+
+\renewcommand{\i}{\mathrm{i}} %l'originale è una lettera strana
+%non mettere prima questo comando se no non funziona!!
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Problem 4}
+\subsection{Problem statement}
+\textit{Given the generic $n$ dimensional multivariate normal distribution}
+\begin{equation}
+    \label{eq:MVN}
+    \N(\vb{x}|\vb{\mu},\mat{C})=\frac{1}{(2\pi)^{n/2}\sqrt{\det \mat{C}}}\exp[-\frac{1}{2}(\vb{x}-\vb*{\mu})^T \mat{C}^{-1} (\vb{x}-\vb*{\mu})]
+\end{equation}
+\textit{prove its characteristic function $\phi (\vb{k})$, defined as}
+\begin{equation*}
+    \phi(\vb{k}) = \mathbb{E}_{\vb{x} \sim p(\vb{x})}[\exp(-\i \vb{k}^T \vb{x})]=\int_{\R^n} \dd[n]{\vb{x}}\exp(-\i \vb{k}^T \vb{x}) p(\vb{x}) = \text{FT}(p(\vb{x}))
+\end{equation*}
+\textit{(with $p(\vb{x}) = \mathcal{N}(\vb{x}|\vb*{\mu}, \mat{C})$) is given by}\footnote{Notice that the problem statement incorrectly stated that the first exponent has a minus sign in front. This is wrong, as can be verified using the proposed solution and e.g. by comparing with \url{https://en.wikipedia.org/wiki/Multivariate_normal_distribution}.}
+\begin{equation}
+    \label{eq:ch_f_MVN}
+    \phi (\vb{k}) = \exp(\i \vb*{\mu}^T \vb{k} - \frac{1}{2}\vb{k}^T \mat{C} \vb{k})
+\end{equation}
+\textit{using:}
+\begin{enumerate}
+    \item \textit{the square completion trick in the exponent of the Fourier transform;}
+    \item \textit{a suitable rotation to diagonalize the covariance matrix.}
+\end{enumerate}
+
+\subsection{Common part of both solution}
+Before actually answering to either of the two questions stated above let's show that both of them amount to proving the same identity, using different strategies.\\
+First of all let's write down the $\phi$ integral explicitly:
+\begin{equation*}
+    \phi (\vb{k}) = \frac{1}{N} \int_{\R^n} \exp{-\i \vb{k}^T\vb{x} -\frac{1}{2}\quadre{(\vb{x}-\vb*{\mu})^T \mat{C}^{-1} (\vb{x}-\vb*{\mu})}} \dd[n]{\vb{x}}
+\end{equation*}
+where $N$ is the normalization constant $(2\pi)^{n/2}\sqrt{\det \mat{C}}$ of the MVN distribution.
+Let's start by expanding the terms in the exponent:
+\begin{equation*}
+    \phi (\vb{k}) = \frac{1}{N} \int_{\R^n} \exp{-\frac{1}{2} \quadre{\vb{x}^T\mat{C}^{-1}\vb{x} -\vb*{\mu}^T\mat{C}^{-1}\vb{x} -\vb{x}^T \mat{C}^{-1}\vb*{\mu} + \vb*{\mu}^T \mat{C}^{-1}\vb*{\mu} +2\i \vb{k}^T \vb{x}}} \dd[n]{\vb{x}}
+\end{equation*}
+By using the fact that both the covariance matrix $\mat{C}$ and its inverse $\mat{C}^{-1}$ are symmetric we can write
+\begin{equation*}
+    \vb{x}^T \mat{C}^{-1} \vb*{\mu} = \vb*{\mu}^T \mat{C}^{-1} \vb{x}
+\end{equation*}
+which holds with respect to an orthonormal basis such as the canonical one to rewrite the above integral; we want to rewrite any term containing $\vb{x}$ in such a way that we obtain a ``vector polynomial'', i.e. all non-constant terms are in the form $(\dots)\vb{x}$.
+
+Once we do so and collect like terms we obtain:
+\begin{equation*}
+    \phi (\vb{k}) = \frac{1}{N} \int_{\R^n} \exp[-\frac{1}{2}\vb{x}^T\mat{C}^{-1}\vb{x} -(\vb*{\mu}^T\mat{C}^{-1} + \i \vb{k}^T)\vb{x} -\frac{1}{2} \vb*{\mu}^T \mat{C}^{-1}\vb*{\mu}] \dd[n]{\vb{x}}
+\end{equation*}
+Notice that w.r.t. $\vb{x}$ we have a quadratic term, a linear one and a constant one. To simplify the notation a bit let us set $\mat{A} \equiv \mat{C}^{-1}$, $\vb{b} \equiv -(\vb*{\mu}^T\mat{C}^{-1} + \i \vb{k}^T)$, $c \equiv \vb*{\mu}^T \mat{C}^{-1}\vb*{\mu}/2$; then the above integral becomes:
+\begin{equation*}
+    \phi (\vb{k}) = \frac{1}{N} \int_{\R^n} \exp[-\frac{1}{2}\vb{x}^T\mat{A}\vb{x} +\vb{b}^T \vb{x} +c] \dd[n]{\vb{x}} = \frac{\e{c}}{N} \int_{\R^n} \exp[-\frac{1}{2}\vb{x}^T\mat{A}\vb{x} +\vb{b}^T \vb{x}] \dd[n]{\vb{x}}
+\end{equation*}
+which means that it suffices to compute the integral of the exponential of the quadratic and linear terms.
+In the following sections we'll prove that
+\begin{equation}
+    \label{eq:integrale_gaussiano}
+    \int_{\R^N} \exp[-\frac{1}{2}\vb{x}^T\mat{A}\vb{x} +\vb{b}^T \vb{x}] \dd[n]{\vb{x}} = \frac{(2\pi)^{n/2}}{\sqrt{\det\mat{A}}}\exp(\frac{1}{2}\vb{b}^T \mat{A}^{-1}\vb{b})
+\end{equation}
+Indeed if we use the above equation and make all terms explicit we obtain:
+\begin{equation*}
+    \phi (\vb{k}) = \cancel{\frac{(2\pi)^{n/2}\sqrt{\det \mat{C}}}{(2\pi)^{n/2}\sqrt{\det \mat{C}}}}\exp[\frac{
+    1}{2}(\vb*{\mu}^T\mat{C}^{-1} + \i \vb{k}^T)\mat{C}(\vb*{\mu}^T\mat{C}^{-1} + \i \vb{k}^T)^T -\frac{1}{2}\vb*{\mu}^T \mat{C}^{-1} \vb*{\mu}]
+\end{equation*}
+where we exploited the $\det\mat{C}^{-1} = 1/\det\mat{C}$ identity, and the last term in the exponent corresponds to the $\e{c}$ term defined above. By once again exploiting the covariance matrix's symmetry we can write $(\vb*{\mu}^T\mat{C}^{-1})^T = \mat{C}^{-1} \vb*{\mu}$, which means that the exponent becomes:
+\begin{equation*}
+    \frac{1}{2}\vb*{\mu}^T \cancel{\mat{C}^{-1} \mat{C}} \mat{C}^{-1} \vb*{\mu} + \frac{1}{2}\i \vb{k}^T \cancel{\mat{C}\mat{C}^{-1}}\vb*{\mu} + \frac{1}{2} \vb*{\mu}^T \cancel{\mat{C}\mat{C}^{-1}} (\i\vb{k})+\frac{1}{2} \i\vb{k}^T \mat{C} (\i \vb{k}) - \frac{1}{2} \vb*{\mu}^T \mat{C}^{-1} \vb*{\mu}
+\end{equation*}
+The first and last term simplify, the second and third sum up due to the symmetry of the scalar product, and in the fourth one $\i^2 = -1$ appears. The result is
+\begin{equation*}
+    \phi (\vb{k}) = \exp(\i \vb*{\mu}^T \vb{k} - \frac{1}{2}\vb{k}^T \mat{C} \vb{k})
+\end{equation*}
+which is indeed equation \eqref{eq:ch_f_MVN}.\footnote{With the correct sign for the term linear in $\vb{k}$.}
+
+This shows that the burden of proof can be moved from equation \eqref{eq:ch_f_MVN} to equation \eqref{eq:integrale_gaussiano}; we now prove this identity in two different ways in the following sections.
+
+\subsection{Solution using square completion}\label{subsec:square_completion}
+Let us rewrite the exponent in the LHS of equation \eqref{eq:integrale_gaussiano} by mimicking the square completion technique employed with scalar equations; here too we wish to disentangle the dependence on $\vb{x}$, with the hope that it may be possible to rewrite the ``vector polynomial'' as a sum of two ``pure'' quadratic forms. This is useful because the integral of the exponential of $-1/2 \cdot \text{q.f.}$ is the $n$-d version of the standard gaussian integral, whose result is well known. Let us then proceed as follows:
+\begin{equation*}
+    -\frac{1}{2}\vb{x}^T\mat{A}\vb{x} +\vb{b}^T \vb{x} = -\frac{1}{2}\vb{x}^T\mat{A}\vb{x} + \textcolor{blue}{2\cdot\frac{1}{2}}\vb{b}^T \textcolor{blue}{\mat{A}^{-1}\mat{A}}\vb{x} - \textcolor{orange}{\frac{1}{2}\vb{b}^T \textcolor{blue}{\mat{A}^{-1}\mat{A}} \mat{A}^{-1}\vb{b}} + \textcolor{orange}{\frac{1}{2}\vb{b}^T \mat{A}^{-1}\vb{b}}
+\end{equation*}
+where terms in blue equal to 1, and those in orange sum up to 0 - hence why we can add them with impunity.
+
+If we now assume that both $\mat{A}$ and its inverse are symmetric (which is true for the covariance matrix) we can exploit $\vb{b}^T \mat{A}^{-1} = (\mat{A}^{-1}\vb{b})^T$ to rewrite the sum as:
+\begin{equation*}
+    -\frac{1}{2}\vb{x}^T\mat{A}\vb{x} +  \frac{1}{2}(\mat{A}^{-1}\vb{b})^T \mat{A}\vb{x}+\frac{1}{2}\underbrace{(\mat{A}^{-1}\vb{b})^T\mat{A}\vb{x}}_{= \vb{x}^T\mat{A}(\mat{A}^{-1}\vb{b})} - \frac{1}{2}(\mat{A}^{-1}\vb{b})^T\mat{A}(\mat{A}^{-1}\vb{b}) +\frac{1}{2} \vb{b}^T\mat{A}^{-1}\vb{b}
+\end{equation*}
+where once again we exploited the symmetry of $\mat{A}$ in the underbraced term.
+Terms 2 and 3 sum up to twice of either of them; we ignore the last term and collect the central $\mat{A}$ in all the others. The result is the following useful identity:
+\begin{equation*}
+    -\frac{1}{2}\vb{x}^T\mat{A}\vb{x} +\vb{b}^T \vb{x} = -\frac{1}{2}(\vb{x} - \mat{A}^{-1}\vb{b})^T \mat{A}(\vb{x} - \mat{A}^{-1}\vb{b}) -\frac{1}{2} \vb{b}^T\mat{A}^{-1}\vb{b}
+\end{equation*}
+where we also collected a $-1/2$ in front of the first term.\\
+Our integral becomes:
+\begin{equation*}
+    \int_{\R^N} \exp[-\frac{1}{2}\vb{x}^T\mat{A}\vb{x} +\vb{b}^T \vb{x}] \dd[n]{\vb{x}} = \exp(\frac{1}{2}\vb{b}^T \mat{A}^{-1}\vb{b})\int_{\R^n} \exp[-\frac{1}{2}(\vb{x} - \mat{A}^{-1}\vb{b})^T \mat{A}(\vb{x} - \mat{A}^{-1}\vb{b})]\dd[n]{\vb{x}}
+\end{equation*}
+where the exponential of the last term was moved outside the integral since it does not depend on $\vb{x}$.
+Notice that the exponential of the q.f. in $\vb{b}$ is already half of the RHS of equation \eqref{eq:integrale_gaussiano}; to complete the proof, therefore, it suffices to compute the last integral in the above equation and show it equals the other term in equation \eqref{eq:integrale_gaussiano}.\\      
+This can be easily done by performing the substitution
+\begin{equation*}
+    \vb{x}' = \vb{x} - \mat{A}^{-1}\vb{b}
+\end{equation*}
+whose jacobian is 1 since it is a simple translation. By using the $n$-d gaussian integral
+\begin{equation}
+    \label{eq:integrale_gaussiano_no_termine_lineare}
+    \int_{\R^n}\exp(-\frac{1}{2}\vb{x}'^T\mat{A}\vb{x}')\dd[n]{\vb{x}'} = \frac{(2\pi)^{n/2}}{\det\mat{A}}
+\end{equation}
+equation \eqref{eq:integrale_gaussiano} follows, and the problem is solved.
+
+\subsection{Solution using a rotation in $\R^n$}
+Let's go back to equation \eqref{eq:integrale_gaussiano} and prove it in a different way. A common way of proving equation \eqref{eq:integrale_gaussiano_no_termine_lineare} is to exploit the spectral theorem, which allows us to diagonalize the (symmetric) covariance matrix using a rotation (whose determinant is 1, and hence as no other effect on the integral than to decouple the variables). This makes us wonder whether the same technique can be used when we also have a linear term, like in equation \eqref{eq:integrale_gaussiano}; we therefore try the same approach.\\
+We know that we can compute an orthogonal rotation matrix $\mat{R}$ (which by definition satisfies the properties $\mat{R}^{-1} = \mat{R}^T$ and $\det\mat{R}=1$) such that under the change of coordinates $\vb{x} = \mat{R}\vb{y}$ the $\vb{A}$ matrix is diagonalized:
+\begin{equation}
+    \mat{R}^{-1}\mat{A}\mat{R} = \mat{R}^T \mat{A}\mat{R} = \mat{\Lambda} = \text{diag}(\lambda_1, \lambda_2 \dots, \lambda_n)
+\end{equation}
+where the $\lambda_i$'s are $\mat{A}$'s eigenvalues.\\
+Such a rotation is useful because quadratic forms (them being scalars) are invariant under it \emph{numerically}, but their abstract form becomes much easier to deal with since the variables are decoupled (thanks to the fact that $\mat{\Lambda}$ is diagonal):
+\begin{equation*}
+    \sum_{i,j} x_i A_{ij} x_j = \vb{x}^T \mat{A}\vb{x} = \vb{y}^T \mat{R}^T \mat{A}\mat{R}\vb{y} = \vb{y}^T\mat{\Lambda}\vb{y} = \sum_i \lambda_i y_i^2
+\end{equation*}
+If we use the above equation in the gaussian integral (plus the properties of exponentials, integrals and the fact that $\det\mat{R} = 1$) we can factorize the $n$-d integral into a product of $n$ copies of the same standard 1D gaussian integral.\\
+Let us perform the above transformation in the LHS of equation \eqref{eq:integrale_gaussiano}. The result is:
+\begin{equation*}
+    \int_{\R^n}\exp(-\frac{1}{2}\vb{y}^T\mat{\Lambda}\vb{y} + \vb{b}^T \mat{R} \vb{y}) \dd[n]{\vb{y}} = \int_{\R^n}\exp(-\frac{1}{2}\sum_{i=1}^n \lambda_i y_i^2 + \sum_{i,j=1}^n b_j R_{ji} y_i) \dd[n]{\vb{y}}
+\end{equation*}
+Let us collect the sum over $i$, then factorize the integral using the usual exponential property. The result is:
+\begin{equation*}
+    \int_{\R^n}\exp[\sum_{i=1}^n \left(-\frac{1}{2} \lambda_i y_i^2 + \sum_{j=1}^n b_j R_{ji} y_i\right)] \dd[n]{\vb{y}} = 
+    \prod_{i=1}^n \int_{-\infty}^{+\infty}\exp(-\frac{1}{2} \lambda_i y_i^2 + \sum_{j=1}^n b_j R_{ji} y_i) \dd{y_i}
+\end{equation*}
+In the last term we also collect $y_i$, which doesn't depend on $j$ and hence can be collected from the sum:
+\begin{equation*}
+    \sum_{j=1}^n b_j R_{ji} y_i = \left(\sum_{j=1}^n b_j R_{ji}\right) y_i \equiv h_i y_i
+\end{equation*}
+where we defined $h_i$ to reduce clutter.
+Our problem has become to compute the product of integrals
+\begin{equation*}
+    \prod_{i=1}^n \int_{-\infty}^{+\infty}\exp(-\frac{1}{2} \lambda_i y_i^2 + h_i y_i) \dd{y_i}
+\end{equation*}
+which is similar to what we obtained previously, with the difference that now we only need to deal with scalar quantities and therefore we can use the simple version of the square completion trick. Indeed consider the following equations:
+\begin{equation*}
+    -\frac{1}{2} \lambda_i y_i^2 + h_i y_i = -\frac{1}{2} \lambda_i \left( y_i^2 - \frac{2 h_i}{\lambda_i} y_i\right) = -\frac{1}{2} \lambda_i \left( y_i^2 - \frac{2 h_i}{\lambda_i} y_i + \frac{h_i^2}{\lambda_i^2} - \frac{h_i^2}{\lambda_i^2} \right) = -\frac{1}{2}\lambda_i \left[\left(y_i - \frac{h_i}{\lambda_i}\right)^2 - \frac{h_i^2}{\lambda_i^2} \right]
+\end{equation*}
+Once we substitute in our product of integrals we obtain:
+\begin{equation*}
+    \prod_{i=1}^n \exp(\frac{1}{2}\frac{h_i^2}{\lambda_i}) \int_{-\infty}^{+\infty} \dd{y_i} \exp[-\frac{1}{2}\left(y_i - \frac{h_i}{\lambda_i}\right)^2] = \left(\prod_{j=1}^n \exp(\frac{1}{2}\frac{h_j^2}{\lambda_j})\right) \cdot \left(\prod_{i=1}^n \int_{-\infty}^{+\infty} \exp[-\frac{1}{2}\left(y_i - \frac{h_i}{\lambda_i}\right)^2]\right)
+\end{equation*}
+where we first moved the constant term outside of the integral, then further split the product in two parts. The very last term is easily evaluated using the 1D gaussian integral, and the result is the product of $\sqrt{2\pi/\lambda_i}$ - which yields the part of \eqref{eq:integrale_gaussiano} with $\det\mat{A}=\prod_i \lambda_i$, so the only thing left to do is to compute the other product, i.e.
+\begin{equation*}
+    \prod_{i=1}^n \exp(\frac{1}{2}\frac{h_i^2}{\lambda_i}) = \prod_{i=1}^n \exp(\frac{1}{2}\frac{\left(\sum_j b_j R_{ji}\right)^2}{\lambda_i}) = \exp(\frac{1}{2} \sum_i \frac{\left(\sum_j b_j R_{ji}\right)^2}{\lambda_i})
+\end{equation*}
+Let us focus on the exponent. Notice that $\sum_j b_j R_{ji} = (\vb{b}^T \mat{R})_i$, which in turn equals its transpose $(\vb{b}^T\mat{R})^T_i = (\mat{R}^T \vb{b})_i = (\mat{R}^{-1} \vb{b})_i$ since the transpose of a number equals itself. This means that we can write:
+\begin{equation*}
+    \sum_i \frac{\left(\sum_j b_j R_{ji}\right)^2}{\lambda_i}) = \sum_i \frac{(\vb{b}^T\mat{R})_i^2}{\lambda_i} = \sum_i \frac{(\vb{b}^T\mat{R})_i(\vb{b}^T\mat{R})_i}{\lambda_i} = \sum_i (\vb{b}^T\mat{R})_i\frac{1}{\lambda_i}(\mat{R}^{-1} \vb{b})_i
+\end{equation*}
+By obtaining the last sum we rewrote it in a highly suggestive way; indeed one can easily prove that it equals $(\vb{b}^T\mat{R})\mat{\Lambda}^{-1}(\mat{R}^{-1}\vb{b})$, by explicitly computing the matrix product and exploiting the fact that $\mat{\Lambda}^{-1}$ is a diagonal matrix.
+\begin{equation*}
+    \vb{b}^T\mat{R}\mat{\Lambda}^{-1}\mat{R}^{-1}\vb{b} = \sum_{i,j} (\vb{b}^T\mat{R})_i\frac{\delta_{ij}}{\lambda_i}(\mat{R}^{-1} \vb{b})_j = \sum_i (\vb{b}^T\mat{R})_i\frac{1}{\lambda_i}(\mat{R}^{-1} \vb{b})_i
+\end{equation*}
+Now let us prove that $\mat{\Lambda}^{-1} = \mat{R}^{-1} \mat{A}^{-1} \mat{R}$ to reverse the diagonalization.
+\begin{equation*}
+    \mat{I} = \mat{\Lambda}^{-1}\mat{\Lambda} = \mat{\Lambda}^{-1} \mat{R}^{-1} \mat{A} \mat{R}
+\end{equation*}
+By multiplying on the right by $\mat{R}^{-1} \mat{A}^{-1} \mat{R}$ we indeed obtain that $\mat{\Lambda}^{-1} = \mat{R}^{-1} \mat{A}^{-1} \mat{R}$; if we substitute this in the previous equations we obtain:
+\begin{equation*}
+    \sum_i \dots = (\vb{b}^T\mat{R})\mat{\Lambda}^{-1}(\mat{R}^{-1}\vb{b}) = \vb{b}^T\cancel{\mat{R}\mat{R}^{-1}} \mat{A}^{-1} \cancel{\mat{R}\mat{R}^{-1}}\vb{b} = \vb{b}^T \mat{A}^{-1}\vb{b}
+\end{equation*}
+Once we multiply this by $1/2$, exponentiate it and then multiply by the term with the determinant equation \eqref{eq:integrale_gaussiano} appears once again, which completes the proof.
+
+\section{Problem 5}
+\subsection{Problem statement}
+\textit{Differentiate the characteristic function to compute the mean and covariance of a MVN distribution, i.e. apply the identity}\footnote{Notice that the problem stated this equation incorrectly by including a minus sign in front of every $\i k_i$ wrt which we compute the derivatives, which one can show to have the effect of compensating the mistake in $\phi$ mentioned before. The correct equation can be found e.g. \href{https://www.statlect.com/fundamentals-of-probability/joint-characteristic-function}{here} or \href{https://en.m.wikipedia.org/wiki/Characteristic_function_(probability_theory)}{here}.}
+\begin{equation}
+    \label{eq:momenti_derivate_funzione_caratteristica}
+    \mathbb{E}[x_\alpha^{n_\alpha}\cdot\dots\cdot x_\beta^{n_\beta}] = %\pdv{\phi(\vb{k})}{(\i k_\alpha)}{(\i k_\beta)}
+    \eval{\frac{\partial^{n_\alpha\cdot\dots n_\beta} \phi(\vb{k})}{\partial(\i k_\alpha)^{n_\alpha}\dots\partial(\i k_\beta)^{n_\beta}}}_{\vb{k} = \vb{0}} % eccezione perché è un caso strano che non so come rendere con \pdv
+\end{equation}
+
+
+\subsection{Solution}
+To solve the problem we first write down the vector mean and the covariance matrix of our MVN distribution, then we rewrite their components as suitable moments - which allows us to use equation \eqref{eq:momenti_derivate_funzione_caratteristica}.
+\subsubsection{Mean $=\vb*{\mu}$}
+The expected value of a vector random variable is in general given by
+\begin{equation*}
+    \mathbb{E}(\vb{x}) = \mathbb{E}\mqty(x_1\\x_2\\ \vdots\\ x_n)=\mqty(\mathbb{E}(x_1)\\ \mathbb{E}(x_2)\\ \vdots\\ \mathbb{E}(x_n))
+\end{equation*}
+which simply means that the expected value of the overall vector is the vector of the expected values (consistent with the linearity property of the $\mathbb{E}$ operator).\\
+This result implies that it suffices to compute the generic $i$-th component of the above vector, then go back to vector notation.\\
+Using equation \eqref{eq:momenti_derivate_funzione_caratteristica} we obtain:
+\begin{equation*}
+    \mathbb{E}(x_i) = \eval{\pdv{\phi (\vb{k})}{(\i k_i)}}_{\vb{k} = \vb{0}}
+\end{equation*}
+Let us compute the derivative first, then evaluate it in $\vb{k} = \vb{0}$ at the end.\\
+Given the quasi MVN-like analytical form of the characteristic function the derivative is easily computed using elementary results from calculus:
+\begin{equation*}
+    \pdv{\phi (\vb{k})}{(\i k_i)} = 
+    \pdv{(\i k_i)}\exp(\i \vb*{\mu}^T\vb{k}-\frac{1}{2}\vb{k}^T\mat{C}\vb{k})=\exp(\i \vb*{\mu}^T\vb{k}-\frac{1}{2}\vb{k}^T\mat{C}\vb{k})\pdv{(\i k_i)}\left(\i \vb*{\mu}^T\vb{k}-\frac{1}{2}\vb{k}^T\mat{C}\vb{k}\right)
+\end{equation*}
+Before rigorously computing this derivative let us perform an ``intuitive'' computation of the last derivative. We need to differentiate a linear term in $\vb{k}$, and a quadratic one in the same variable; by analogy with the 1D case we expect the result to be the sum of a constant term (i.e. the derivative of the first order term) and a linear term in $\vb{k}$ (i.e. the derivative of the second order term). This means that when we evaluate the result in $\vb{k} = \vb{0}$ only the constant term will survive, and since it will be multiplied by $\e{0}=1$ we can predict that the final result will be entirely determined by the derivative of the scalar product term; since we know the final result must equal $\vb*{\mu}$ we can further expect this derivative to indeed be equal to $\vb*{\mu}$.\\
+Let us now focus on a rigorous computation of the last derivative; using linearity we can split it in the sum of two simpler derivatives.\\
+\emph{Linear term's derivative:}
+\begin{equation*}
+    \pdv{(\i k_i)}(\i \vb*{\mu}^T\vb{k}) = \pdv{(\i k_i)}\left(\sum_\alpha \i \mu_\alpha k_\alpha \right) = \sum_\alpha \mu_\alpha \pdv{(\i k_\alpha)}{(\i k_i)}
+\end{equation*}
+where in the last step we exploited linearity and the fact that $\vb*{\mu}$ is a constant vector.\\
+Now since in general $\pdv*{y_\alpha}{y_i} = \delta_{\alpha i}$ we immediately obtain:
+\begin{equation*}
+    \pdv{(\i k_i)}(\i \vb*{\mu}^T \vb{k}) = \sum_\alpha \mu_\alpha \delta_{\alpha i} = \mu_i
+\end{equation*}
+Notice that this result can be interpreted as an $n$-d generalization of the known 1D result $(cx)' = c$, just with the scalar product of two vector functions instead of the traditional product of two scalar functions. Furthermore notice that our prediction was correct; this term must equal $\mu_i$, which also implies that the second derivative must cancel when evaluated in $\vb{k} = \vb{0}$.\\
+\emph{Quadratic term's derivative:} it's useful to first rewrite the differential operator, since this time the function to be differentiated doesn't have $\i$. We set $q_i = \i k_i$, then use the chain rule:
+\begin{equation*}
+    \pdv{(\i k_i)} = \pdv{q_i} = \dv{k_i}{q_i}\pdv{k_i} = \dv{(q_i/\i)}{q_i}\pdv{k_i} = \frac{1}{\i}\pdv{k_i} = -\i \pdv{k_i}
+\end{equation*}
+which rigorously justified the intuitive identity $\pdv*{(\i h_i)} = (1/\i) \pdv*{h_i}$.\\
+We can now write:
+\begin{equation*}
+    \pdv{(\i k_i)}(-\frac{1}{2}\vb{k}^T\mat{C}\vb{k}) =
+    -\i \left(-\frac{1}{2}\right) \pdv{k_i}(\sum_{\alpha,\beta} k_\alpha C_{\alpha\beta} k_\beta) = 
+    \frac{1}{2}\i \sum_{\alpha,\beta} \pdv{k_i}(k_\alpha C_{\alpha\beta} k_\beta)
+\end{equation*}
+Now we use the derivative product rule and the fact that $\mat{C}$ is a constant matrix. We obtain:
+\begin{equation*}
+    \dots = \frac{\i}{2} \left(\sum_{\alpha,\beta} \underbrace{\pdv{k_\alpha}{k_i}}_{= \delta_{\alpha i}}C_{\alpha\beta} k_\beta +
+    \sum_{\alpha,\beta} k_\alpha C_{\alpha\beta}\underbrace{\pdv{k_\beta}{k_i}}_{=\delta_{\beta i}}
+    \right) = 
+    \frac{\i}{2} \left(
+    \sum_\beta C_{i\beta}k_\beta + \sum_\alpha \underbrace{C_{\alpha i}}_{= C_{i \alpha}} k_\alpha
+    \right)
+\end{equation*}
+Now let us replace the dummy index $\beta$ with $\alpha$ in the first sum, and exploit the symmetry of $\mat{C}$ to swap indices in the last sum. The result is that the two sums are both equal to the $i$-th component of the $\mat{C}\vb{k}$ vector, which in turn makes the $1/2$ in front disappear.
+We're left with
+\begin{equation*}
+    \pdv{(\i k_i)}(-\frac{1}{2}\vb{k}^T\mat{C}\vb{k}) = \i (\mat{C}\vb{k})_i
+\end{equation*}
+Notice that we implicitly derived the identity
+\begin{equation*}
+    \pdv{k_i}(\alpha\vb{k}^T\mat{C}\vb{k})=2\alpha(\mat{C}\vb{k})_i \iff \grad_{\vb{k}}(\alpha\vb{k}^T\mat{C}\vb{k}) = 2\alpha\mat{C}\vb{k}
+\end{equation*}
+which can be thought of as a generalization of the known result $(cx^2)'=2cx$.\\
+Also notice that this second derivative is in general a complex quantity - but the expected value of a real MVN cannot be, therefore our prediction that this term evaluates to zero when $\vb{k}=\vb{0}$ is not only correct but ``inevitable''.\\
+Now we are ready to put everything together; we obtain:
+\begin{equation*}
+    \mathbb{E}(x_i) = \exp(\i\vb*{\mu}^T\vb{k}-\frac{1}{2}\vb{k}^T\mat{C}\vb{k})\cdot\left[\mu_i+2(\mat{C}\vb{k})_i\right]
+\end{equation*}
+which when evaluated in $\vb{k}=\vb{0}$ trivially yields $\mathbb{E}(x_i) = \mu_i$. Since this equation holds for any $i$ we immediately obtain:
+\begin{equation*}
+    \mathbb{E}(\vb{x}) = \vb*{\mu}
+\end{equation*}
+which is not only the final result, but also the correct one - since we know that the $\vb*{\mu}$ vector appearing in the definition of the MVN distribution has indeed the meaning of mean vector.
+
+\subsubsection{Covariance $=\mat{C}$}
+Let us now repeat the same strategy employed above: we rewrite our target as a combination of distribution moments, which can be evaluated using equation \eqref{eq:momenti_derivate_funzione_caratteristica}.\\
+We start by noting that the covariance matrix $\text{Cov}(\vb{x},\vb{x})$ can be rewritten as follows:
+\begin{equation*}
+    \text{Cov}(\vb{x},\vb{x}) = \mathbb{E}(\vb{x}\vb{x}^T) - \mathbb{E}(\vb{x})\mathbb{E}(\vb{x}^T)
+\end{equation*}
+where exactly as in the previous part the expected value of a matrix is by linearity the matrix of the expected values of each individual entry.\\
+The last term simply equals $\vb*{\mu}\vb*{\mu}^T$ due to what we proved before, so we only need to compute the matrix
+\begin{equation*}
+    \mathbb{E}(\vb{x}\vb{x}^T) =
+    \mathbb{E}
+    \mqty(x_1^2 & \dots & x_1 x_n\\
+    x_2 x_1 & \dots & x_2 x_n\\
+    \vdots & \ddots & \vdots\\
+    x_n x_1 & \dots & x_n^2)
+    =
+    \mqty(\mathbb{E}(x_1^2) & \dots & \mathbb{E}(x_1 x_n)\\
+    \mathbb{E}(x_2 x_1) & \dots & \mathbb{E}(x_2 x_n)\\
+    \vdots & \ddots & \vdots\\
+    \mathbb{E}(x_n x_1) & \dots & \mathbb{E}(x_n^2)) =
+    (\mathbb{E}(x_i x_j))_{i,j = 1}^n
+\end{equation*}
+Similarly to the previous part of the exercise, therefore, in order to compute the whole covariance matrix it suffices to compute its generic element $\mathbb{E}(x_ix_j)$.\\
+Using equation \eqref{eq:momenti_derivate_funzione_caratteristica} we find:\footnote{We use Schwarz's theorem about partial derivatives here to maximize convenience, because by bringing the $i$ derivative ``inside'' we can more easily recycle previous computations.}
+\begin{equation*}
+    \mathbb{E}(x_ix_j) = \eval{\pdv{\phi (\vb{k})}{(\i k_i)}{(\i k_j)}}_{\vb{k}=\vb{0}} = \left(\pdv{(\i k_j)} \pdv{\phi (\vb{k})}{(\i k_i)}\right)_{\vb{k = \vb{0}}}
+\end{equation*}
+This means that we can take the first derivative of $\phi(\vb{k)}$ w.r.t. $\i k_i$ (which we already computed in the first half of the exercise), differentiate once again w.r.t. $\i k_j$, then finally evaluate the result in $\vb{k} = \vb{0}$.\\ 
+Once again let us start by predicting the result: since this time we're taking the second derivative of $\phi$ we expect the linear term to disappear, and the quadratic term to actually matter this time - and this is promising, since this term contains $\mat{C}$ (our final desired result).\\
+Let us start by applying the product rule to the first derivative of $\phi$ (which we already know):
+\begin{equation*}
+    \pdv{(\i k_j)}(\pdv{\phi(\vb{k})}{(\i k_i)}) = \pdv{(\i k_j)}(\exp(\i\vb*{\mu}^T\vb{k} - \frac{1}{2}\vb{k}^T\mat{C}\vb{k})(\mu_i+\i (\mat{C}\vb{k})_i)) =
+\end{equation*}
+\begin{equation*}
+    = \pdv{(\i k_j)}(\exp(\i\vb*{\mu}^T\vb{k} - \frac{1}{2}\vb{k}^T\mat{C}\vb{k}))\cdot(\mu_i+\i (\mat{C}\vb{k})_i) +
+    \exp(\i\vb*{\mu}^T\vb{k} - \frac{1}{2}\vb{k}^T\mat{C}\vb{k})\cdot\pdv{(\i k_j)}((\mu_i+\i (\mat{C}\vb{k})_i))
+\end{equation*}
+The first derivative is easily computed; we simply need to replace $i$ with $j$ in the results obtained before.
+\begin{equation*}
+    \pdv{(\i k_j)}(\exp(\i\vb*{\mu}^T\vb{k} - \frac{1}{2}\vb{k}^T\mat{C}\vb{k}))\cdot(\mu_i+\i (\mat{C}\vb{k})_i) =
+    \left(\exp(\i\vb*{\mu}^T\vb{k} - \frac{1}{2}\vb{k}^T\mat{C}\vb{k})\right)(\mu_j + \i(\mat{C}\vb{k}_j))(\mu_i + \i(\mat{C}\vb{k}_i))
+\end{equation*}
+The second term is the exponential factor times the following derivative:\footnote{Remember that $\vb*{\mu}$ and $\mat{C}$ are constants, and that the derivative is a linear operator.}
+\begin{equation*}
+    \pdv{(\i k_j)}(\mu_i + \i (\mat{C}\vb{k})_i) = \pdv{(\i k_j)}(\sum_\alpha C_{i\alpha}(\i k_\alpha)) = \sum_\alpha C_{i\alpha}\underbrace{\pdv{(\i k_\alpha)}{(\i k_j)}}_{= \delta_{\alpha j}} = C_{ij}
+\end{equation*}
+Notice that $\i$ has disappeared - a good sign, since we're aiming for $\text{Cov}(\vb{x}, \vb{x}) = \mat{C}\in \R_{n,n}$!\\ 
+If we now put everything together, collect the exponential (which will evaluate to 1), then set $\vb{k} = \vb{0}$ we obtain:
+\begin{equation*}
+    \mathbb{E}(x_i x_j) = \mu_i\mu_j + C_{ij}
+\end{equation*}
+The above can be rewritten in matrix form if we consider that $(\mathbb{E}(\vb{x}\vb{x}^T))_{ij} = \mathbb{E}(x_i x_j)$, $(\vb*{\mu}\vb*{\mu}^T)_{ij} = \mu_i\mu_j$, $(\mat{C})_{ij} =C_{ij}$; we obtain:
+\begin{equation*}
+    \mathbb{E}(\vb{x}\vb{x}^T) = \vb*{\mu}\vb*{\mu}^T + \mat{C}
+\end{equation*}
+So by putting everything together we obtain our final result:
+\begin{equation*}
+    \text{Cov}(\vb{x},\vb{x}) =
+    \mathbb{E}(\vb{x}\vb{x}^T) - \mathbb{E}(\vb{x})\mathbb{E}(\vb{x}^T) =
+    \vb*{\mu}\vb*{\mu}^T + \mat{C} - \vb*{\mu}\vb*{\mu}^T = \mat{C} 
+\end{equation*}
+which is our final and correct result:
+\begin{equation*}
+    \text{Cov}(\vb{x},\vb{x}) = \mat{C}
+\end{equation*}
+
+\section{Problem 6}
+\subsection{Problem statement}
+\textit{Show that the characteristic function of a generic multivariate normal distribution is another (unnormalized) normal distribution}.
+
+
+\subsection{Solution}
+To solve this problem let us recall some results from problem 4.\\
+The purpose of problem 4 was to prove equation \eqref{eq:ch_f_MVN}, which is 
+\begin{equation*}
+    \phi (\vb{k}) = \exp(\i \vb*{\mu}^T \vb{k} - \frac{1}{2}\vb{k}^T \mat{C} \vb{k})
+\end{equation*}
+This already shows that $\phi$ is an exponential of something with no constants in front, so as long as we are able to prove that the exponent can be cast into a suitable form it trivially follows that $\phi$ is an \emph{unnormalized} MVN distribution.\\
+Let us then rewrite the exponent; to do so we recall that in section \ref{subsec:square_completion} we derived the following identity using the vector version of the square completion trick:
+\begin{equation*}
+    -\frac{1}{2}\vb{x}^T\mat{A}\vb{x} +\vb{b}^T \vb{x} = -\frac{1}{2}(\vb{x} - \mat{A}^{-1}\vb{b})^T \mat{A}(\vb{x} - \mat{A}^{-1}\vb{b}) -\frac{1}{2} \vb{b}^T\mat{A}^{-1}\vb{b}
+\end{equation*}
+This identity allows us to rewrite the sum between a quadratic and a linear form as a sum of two quadratic forms, and by using it we can swap the linear term in the exponent with a quadratic one - which is what we need, since a MVN distribution is essentially the exponential of a pure quadratic form.\\
+We set $\vb{x}=\vb{k}$, $\mat{A} = \mat{C}$, $\vb{b} = \i\vb*{\mu}$. Then the above identity becomes:
+\begin{equation*}
+    -\frac{1}{2}\vb{k}^T\mat{C}\vb{k} + \i \vb*{\mu}^T \vb{k} = -\frac{1}{2}(\vb{k}-\i \mat{C}^{-1}\vb{k})^T\mat{C}(\vb{k}-\i \mat{C}^{-1}\vb*{\mu}) + \frac{1}{2}\vb*{\mu}^T \mat{C}^{-1}\vb*{\mu}
+\end{equation*}
+Now $\phi$ equals the exponential of two quadratic forms - one of which is actually a constant w.r.t. $\vb{k}$, and can thus be brought outside. We obtain:
+\begin{equation*}
+    \phi(\vb{k}) = \exp(\frac{1}{2}\vb*{\mu}^T \mat{C}^{-1} \vb*{\mu}) \exp(-\frac{1}{2}(\vb{k}-\i \mat{C}^{-1}\vb{k})^T\mat{C}(\vb{k}-\i \mat{C}^{-1}\vb*{\mu}))
+\end{equation*}
+which can be rewritten as:
+\begin{equation*}
+    \phi(\vb{k})  \propto \exp(-\frac{1}{2}(\vb{k}-\i \mat{C}^{-1}\vb{k})^T\mat{C}(\vb{k}-\i \mat{C}^{-1}\vb*{\mu}))
+\end{equation*}
+This makes it clear that
+\begin{equation*}
+    \phi(\vb{k}) \propto\mathcal{N}(\vb{k}|\i \mat{C}^{-1}\vb*{\mu}, \mat{C}^{-1})
+\end{equation*}
+so that $\phi(\vb{k})$ is almost a MVN distribution itself, with almost the same parameters as the starting distribution; indeed notice that by Fourier transforming the original distribution we remain in the set of MVN distributions, just with the inverse covariance and a linearly transformed version of the mean.\\
+To conclude the exercise we note that we cannot replace the proportionality sign with a true equality, since in order for $\phi(\vb{k})$ to be a true MVN it would need to be normalized, i.e. the constant in front would need to be
+\begin{equation*}
+    N = \frac{1}{(2\pi)^{n/2}\sqrt{\det\mat{C}}}
+\end{equation*}
+whereas the multiplicative constant we actually have is 
+\begin{equation*}
+    N' = \exp(\frac{1}{2}\vb*{\mu}^T \mat{C}^{-1} \vb*{\mu})
+\end{equation*}
+Even though there may be a way to artificially construct $\vb*{\mu}$ and $\mat{C}$ in such a way as to obtain $N=N'$ in general these two quantities are fixed constant, specified by the problem at hand (for example they may be specified by some experimental data once we perform inference via Bayesian parameter estimation). This means that in general (i.e. for ``random'' $\vb*{\mu}$ and $\mat{C}$) we have $N\neq N'$, and therefore that $\phi(\vb{k})$ is an \emph{unnormalized} MVN distribution in $\vb{k}$ (with mean and covariance specified above).\\
+This concludes the exercise.
+\end{document}

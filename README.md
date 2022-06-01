@@ -1,2 +1,5 @@
-# astrostatistics_and_cosmology
- Exercises for the Astostatistics & Cosmology course @ UniPD
+# Astrostatistics & Cosmology
+Exercises for the Astostatistics & Cosmology course @ UniPD
+
+The two folders contain the $\LaTeX$ source of exercises 4 to 12 (they were pen & paper style exercises).
+Exercise 7 is a coding exercise about MCMC; its R solution is available in notebook format.
